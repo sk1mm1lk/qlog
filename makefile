@@ -5,3 +5,4 @@ dev:
 
 clean:
 	$(MAKE) -C yaki-server clean
+	$(MAKE) -C yaki-client clean
