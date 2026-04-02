@@ -4,7 +4,7 @@ __pycache__/
 *.pyo
 
 # Database
-wiki-server/data/wiki.db
+yaki-server/data/yaki.db
 
 # Env
-wiki-server/.env
+yaki-server/.env
