@@ -5,3 +5,6 @@ __pycache__/
 
 # Database
 wiki-server/data/wiki.db
+
+# Env
+wiki-server/.env
