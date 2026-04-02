@@ -25,3 +25,7 @@ def startup():
 @app.get('/health')
 def health():
     return {'status': 'ok'}
+
+@app.get('/version')
+def version():
+    return {"api_version": "1"}
