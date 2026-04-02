@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS notes (
     status                VARCHAR DEFAULT 'draft',
     visibility            VARCHAR DEFAULT 'private',
     retention_period_days INTEGER DEFAULT 0,
+    contents              BLOB NOT NULL,
     last_confirmed_at     TIMESTAMP,
     file_hash             BLOB NOT NULL,
     hash_algorithm        VARCHAR NOT NULL,

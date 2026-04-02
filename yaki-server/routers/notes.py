@@ -20,7 +20,20 @@ def list_notes(
     db = get_db()
 
     query = '''
-        SELECT DISTINCT n.*
+        SELECT DISTINCT
+            n.id,
+            n.title,
+            n.project_title,
+            n.relative_file_path,
+            n.status,
+            n.visibility,
+            n.retention_period_days,
+            --n.contents,  --  Don't want to be sending so much information for just listing
+            n.last_confirmed_at,
+            n.file_hash,
+            n.hash_algorithm,
+            n.created_at,
+            n.modified_at
         FROM notes n
         LEFT JOIN notes_tags nt
             ON n.id = nt.note_id
@@ -53,7 +66,24 @@ def list_notes(
 def get_note(note_id: int):
     db = get_db()
 
-    query = 'SELECT * FROM notes WHERE id = ?'
+    query = '''
+        SELECT
+            id,
+            title,
+            project_title,
+            relative_file_path,
+            status,
+            visibility,
+            retention_period_days,
+            contents,
+            last_confirmed_at,
+            file_hash,
+            hash_algorithm,
+            created_at,
+            modified_at
+        FROM notes
+        WHERE id = ?
+    '''
     params = [note_id]
     note = db.execute(query, params).fetchone()
 
@@ -108,13 +138,14 @@ def create_note(note: NoteCreate):
             status,
             visibility,
             retention_period_days,
+            contents,
             last_confirmed_at,
             file_hash,
             hash_algorithm,
             created_at,
             modified_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         RETURNING id
     '''
     params = [
@@ -124,6 +155,7 @@ def create_note(note: NoteCreate):
         note.status,
         note.visibility,
         note.retention_period_days,
+        note.contents,
         note.last_confirmed_at if note.last_confirmed_at else current_timestamp,
         note.file_hash,
         note.hash_algorithm,
@@ -149,10 +181,10 @@ def update_note(note_id: int, note: NoteUpdate):
         raise HTTPException(status_code=400, detail='No fields provided')
 
     set_clause = ', '.join(f'{field} = ?' for field in fields)
+    # TODO: Add a check for modified_at being changed, and if not set as current timestamp
     query = f'''
         UPDATE notes SET
-            {set_clause},
-            modified_at = current_timestamp
+            {set_clause}
         WHERE id = ?
     '''
     params = list(fields.values()) + [note_id]

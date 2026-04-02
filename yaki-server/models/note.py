@@ -10,6 +10,7 @@ class NoteCreate(BaseModel):
     status: str = "draft"
     visibility: str = "private"
     retention_period_days: int = 0
+    contents: bytes
     last_confirmed_at: Optional[datetime]
     file_hash: bytes
     hash_algorithm: str
@@ -23,9 +24,12 @@ class NoteUpdate(BaseModel):
     status: Optional[str] = None
     visibility: Optional[str] = None
     retention_period_days: Optional[int] = None
+    contents: Optional[bytes] = None
     last_confirmed_at: Optional[datetime] = None
     file_hash: Optional[bytes] = None
     hash_algorithm: Optional[str] = None
+    created_at: Optional[datetime]
+    modified_at: Optional[datetime]
 
 class NoteResponse(BaseModel):
     id: int
@@ -42,6 +46,7 @@ class NoteResponse(BaseModel):
     modified_at: datetime
 
 class NoteDetailResponse(NoteResponse):
+    contents: bytes
     tags: list[TagResponse] = []
     forward_links: list[int] = []
     backward_links: list[int] = []
