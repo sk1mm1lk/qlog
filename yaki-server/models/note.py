@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
 from models.tag import TagResponse
 
 class NoteCreate(BaseModel):
@@ -10,12 +9,12 @@ class NoteCreate(BaseModel):
     status: str = "draft"
     visibility: str = "private"
     retention_period_days: int = 0
-    contents: bytes
-    last_confirmed_at: Optional[datetime]
-    file_hash: bytes
+    contents: str
+    last_confirmed_at: Optional[str]
+    file_hash: str
     hash_algorithm: str
-    created_at: Optional[datetime]
-    modified_at: Optional[datetime]
+    created_at: Optional[str]
+    modified_at: Optional[str]
 
 class NoteUpdate(BaseModel):
     title: Optional[str] = None
@@ -24,12 +23,12 @@ class NoteUpdate(BaseModel):
     status: Optional[str] = None
     visibility: Optional[str] = None
     retention_period_days: Optional[int] = None
-    contents: Optional[bytes] = None
-    last_confirmed_at: Optional[datetime] = None
-    file_hash: Optional[bytes] = None
+    contents: Optional[str] = None
+    last_confirmed_at: Optional[str] = None
+    file_hash: Optional[str] = None
     hash_algorithm: Optional[str] = None
-    created_at: Optional[datetime]
-    modified_at: Optional[datetime]
+    created_at: Optional[str]
+    modified_at: Optional[str]
 
 class NoteResponse(BaseModel):
     id: int
@@ -39,14 +38,14 @@ class NoteResponse(BaseModel):
     status: str
     visibility: str
     retention_period_days: int
-    last_confirmed_at: datetime
-    file_hash: bytes
+    last_confirmed_at: str
+    file_hash: str
     hash_algorithm: str
-    created_at: datetime
-    modified_at: datetime
+    created_at: str
+    modified_at: str
 
 class NoteDetailResponse(NoteResponse):
-    contents: bytes
+    contents: str
     tags: list[TagResponse] = []
     forward_links: list[int] = []
     backward_links: list[int] = []

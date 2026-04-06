@@ -6,6 +6,7 @@ from models.project import ProjectCreate, ProjectResponse
 from data.database import get_db
 from datetime import datetime, timezone
 from typing import Optional
+import base64
 import uuid
 
 router = APIRouter(prefix='/notes', tags=['notes'])
@@ -66,21 +67,25 @@ def list_notes(
 def get_note(note_id: int):
     db = get_db()
 
-    query = '''
+    columns = [
+        'id',
+        'title',
+        'project_title',
+        'relative_file_path',
+        'status',
+        'visibility',
+        'retention_period_days',
+        'contents',
+        'last_confirmed_at',
+        'file_hash',
+        'hash_algorithm',
+        'created_at',
+        'modified_at'
+    ]
+
+    query = f'''
         SELECT
-            id,
-            title,
-            project_title,
-            relative_file_path,
-            status,
-            visibility,
-            retention_period_days,
-            contents,
-            last_confirmed_at,
-            file_hash,
-            hash_algorithm,
-            created_at,
-            modified_at
+            {','.join(columns)}
         FROM notes
         WHERE id = ?
     '''
@@ -89,6 +94,26 @@ def get_note(note_id: int):
 
     if not note:
         raise HTTPEXception (status_code=404, detail="Note not found")
+
+    note_dict = {}
+
+    for i, cell in enumerate(note):
+        note_dict[columns[i]] = cell
+
+    # last_confirmed_at
+    note_dict['last_confirmed_at'] = note_dict['last_confirmed_at'].strftime('%Y-%m-%d %H:%M:%S')
+
+    # created_at
+    note_dict['created_at'] = note_dict['created_at'].strftime('%Y-%m-%d %H:%M:%S')
+
+    # modified_at
+    note_dict['modified_at'] = note_dict['modified_at'].strftime('%Y-%m-%d %H:%M:%S')
+
+    # contents
+    note_dict['contents'] = base64.b64encode(note_dict['contents']).decode('ascii')
+
+    # file_hash
+    note_dict['file_hash'] = base64.b64encode(note_dict['file_hash']).decode('ascii')
 
     query = '''
         SELECT
@@ -118,7 +143,7 @@ def get_note(note_id: int):
     backward_links = db.execute(query, params).fetchall()
 
     return {
-        **dict(note),
+        **note_dict,
         'tags': [TagResponse(id=t[0], title=t[1]) for t in tags],
         'forward_links': [r[0] for r in forward_links],
         'backward_links': [r[0] for r in backward_links]

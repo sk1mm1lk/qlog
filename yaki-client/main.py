@@ -1,42 +1,36 @@
 #!/usr/bin/env python3
 import httpx
 import typer
+from commands import notes, utils
 
 app = typer.Typer()
-BASE_URL = 'http://localhost:8000'
 
 @app.command()
 def health_check():
-    check_server()
-
-    print('Server is up')
-
-def check_server():
-    try:
-        httpx.get(f'{BASE_URL}/health')
-    except httpx.ConnectError:
-        print('yaki server is not running.')
-        raise SystemExit(1)
+    utils.health_check()
 
 @app.command()
 def list_notes(
-    status: str = None,
-    visibility: str = None,
-    project_title: str = None,
-    tag: str = None
+    status: str = typer.Argument(None),
+    visibility: str = typer.Argument(None),
+    project_title: str = typer.Argument(None),
+    tag: str = typer.Argument(None)
 ):
-    check_server()
-    params = {}
-    if status:
-        params['status'] = status
-    if project:
-        params['project'] = project
-    if tag:
-        params['tag'] = tag
+    notes.list(status, visibility, project_title, tag)
 
-    res = httpx.get(f'{BASE_URL}/notes/', params=params)
-    for note in res.json():
-        print(f"[{note['id']}] {note['title']}")
+@app.command()
+def add(
+    file_name: str = typer.Argument('.'),
+    project_title: str = typer.Argument('yaki'),
+    status: str = typer.Argument('draft'),
+    visibility: str = typer.Argument('private'),
+    retention_period_days: int = typer.Argument(0)
+):
+    notes.add(file_name, project_title, status, visibility, retention_period_days)
+
+@app.command()
+def add_dir(dir_name: str = typer.Argument('.')):
+    notes.add_dir(dir_name)
 
 if __name__ == '__main__':
     app()
