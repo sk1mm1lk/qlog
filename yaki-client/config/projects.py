@@ -1,1 +1,0 @@
-DEFAULT_PROJECT_NAME = 'yaki'

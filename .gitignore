@@ -3,8 +3,5 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Database
-yaki-server/data/yaki.db
-
-# Env
-yaki-server/.env
+# venv
+.venv
