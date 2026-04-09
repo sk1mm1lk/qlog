@@ -25,3 +25,15 @@ def get_db():
     except IOError:
         raise IOError(f'Failed to get lock on {str(db_path)}')
     return db
+
+def truncate(truncate_target: str):
+    db = get_db()
+
+    query = f'DELETE FROM {truncate_target};'
+
+    try:
+        db.execute(query)
+    except:
+        # TODO: Add more verbosity to this error
+        print(f'Failed to truncate {truncate_target}')
+        raise
