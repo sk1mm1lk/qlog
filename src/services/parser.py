@@ -6,6 +6,15 @@ import tomllib
 
 config = config.get_config()
 
+def parse_str_value(value: str):
+    return value
+
+def parse_list_value(value: list):
+    return ','.join(value)
+
+def parse_dict_value(value: dict):
+    return str(value)
+
 def parse_frontmatter(id, frontmatter, frontmatter_format):
     frontmatter_dict = {}
 
@@ -27,19 +36,37 @@ def parse_frontmatter(id, frontmatter, frontmatter_format):
     notes_query = 'UPDATE notes SET '
     notes_params = []
 
+    value_type_conversion = {
+        str: parse_str_value,
+        list: parse_list_value,
+        dict: parse_dict_value
+    }
+
+    value_type_str = {
+        str: 'str',
+        list: 'list',
+        dict: 'dict'
+    }
+
+    notes_key_value = []
+
     for key, value in frontmatter_dict.items():
         if key in notes_keys:
             # Notes params
             notes_query += f'{key} = ?,'
             notes_params.append(value)
-        # TODO: tags
-        # else:
-        #     # Tags
-        #     if key == 'tag':
-        #         # singular tag
-        #     elif key == 'tags':
-        #         # plural tags
+        else:
+            # Tags
+            converted_func = value_type_conversion.get(type(value))
 
+            if converted_func:
+                key_value = {
+                    'note_id': id,
+                    'key': key,
+                    'value': converted_func(value),
+                    'value_type': value_type_str.get(type(value))
+                }
+                notes_key_value.append(key_value)
 
     db = database.get_db()
 
@@ -50,6 +77,15 @@ def parse_frontmatter(id, frontmatter, frontmatter_format):
         notes_params.append(id)
 
         db.execute(notes_query, notes_params)
+
+    if len(notes_key_value) > 0:
+        for key_value in notes_key_value:
+            query = f"INSERT INTO notes_key_value (note_id, note_key, note_value, value_type) VALUES (?, ?, ?, ?)"
+            note_id = key_value['note_id']
+            key = key_value['key']
+            value = key_value['value']
+            value_type = key_value['value_type']
+            db.execute(query, [note_id, key, value, value_type])
 
 def parse_links(source_note_id, links):
     db = database.get_db()
@@ -90,8 +126,7 @@ def parse_dir(target_dir: Path, rebuild: bool, is_parse_frontmatter: bool, is_pa
         raise FileNotFoundError(target_dir)
 
     if rebuild:
-        database.truncate('notes_tags')
-        database.truncate('tags')
+        database.truncate('notes_key_value')
         database.truncate('links')
 
     # TODO: need to handle non rebuild logic
