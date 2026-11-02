@@ -7,6 +7,9 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"path/filepath"
+
+	"github.com/sk1mm1lk/yaki/config"
 )
 
 type noteMessage struct {
@@ -49,13 +52,38 @@ func createMessage(topic, key, message string) noteMessage {
 }
 
 func formatMessage(msg noteMessage) string {
-	outputMessage := ""
-	outputMessage += "[" + msg.datetime + "] "
-	outputMessage += msg.topic + " | "
-	outputMessage += msg.key + " | "
+	outputMessage := "- [ ] "
+	outputMessage += "(" + msg.datetime + ") "
+	outputMessage += msg.key + ": "
 	outputMessage += msg.message
 
 	return outputMessage
+}
+
+func publishMessage(cfg *config.Config, msg noteMessage) error {
+	topicPath := cfg.PathFromTopic(msg.topic)
+	topicDirPath := filepath.Dir(topicPath)
+
+	if err:= os.MkdirAll(topicDirPath, 0750); err != nil {
+		return err
+	}
+
+	messageText := formatMessage(msg) + "\n"
+
+	f, err := os.OpenFile(topicPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+
+	if _, err := f.Write([]byte(messageText)); err != nil {
+		return err
+	}
+
+	if err := f.Close(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func main() {
@@ -65,7 +93,7 @@ func main() {
 
 	topicDefault := "all"
 	keyDefault := "all"
-	messageDefault := "no message"
+	messageDefault := "ping"
 
 	flag.StringVar(&topic, "topic", topicDefault, "Sets the topic to which the note is appended to")
 	flag.StringVar(&key, "key", keyDefault, "Sets the key of the note")
@@ -84,7 +112,11 @@ func main() {
 		promptUser("message", messageDefault, &message)
 	}
 
-	msg := createMessage(topic, key, message)
+	cfg := config.Load()
 
-	fmt.Println(formatMessage(msg))
+	msg := createMessage(topic, key, message)
+	
+	if err := publishMessage(cfg, msg); err != nil {
+		panic(err)
+	}
 }

@@ -1,0 +1,7 @@
+version: 1
+note_root: /path/to/notes/root
+topics:
+  - name: scratch
+    path: /path/to/scratch/topic/note.md
+  - name: todo
+    path: /path/to/todo/topic/note.md
