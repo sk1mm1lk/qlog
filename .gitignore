@@ -1,10 +1,26 @@
-# Python
-__pycache__/
-*.pyc
-*.pyo
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 
-# Database
-yaki-server/data/yaki.db
+# Test binary, built with `go test -c`
+*.test
 
-# Env
-yaki-server/.env
+# Code coverage profiles and other test artifacts
+*.out
+coverage.*
+!coverage.go
+*.coverprofile
+profile.cov
+
+# Go workspace file
+go.work
+go.work.sum
+
+# env file
+.env
+
+# yaki binary
+yaki
