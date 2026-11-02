@@ -5,7 +5,7 @@
 - Yaki is a basic way to take notes in the terminal to a pre-configured directory and topics
 - You set a note directory and when writing to a topic it appends to a file of that topic name
 
-## Installation
+## Installation and Usage
 
 ```go
 go build
