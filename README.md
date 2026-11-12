@@ -1,24 +1,24 @@
-# yaki
+# qlog
 
 ## Description
 
-- Yaki is a basic way to take notes in the terminal to a pre-configured directory and topics
-- You set a note directory and when writing to a topic it appends to a file of that topic name
+- qlog stands for quick log, it's purpose is to quickly log something to a file
+- The logs are added to files based on the "topic" you add to, and "key" is just a way to sort the logs inside the file
 
 ## Installation and Usage
 
 ```go
 go build
-./yaki --help
+./qlog --help
 ```
 
 ## Configuration
 
-- Yaki will attempt to load a configuration file from the following locations in order:
-    - `~/.config/yaki/config.yaml`
-    - `~/.config/yaki/config.yml`
-    - `/usr/local/etc/yaki/config.yaml`
-    - `/usr/local/etc/yaki/config.yml`
+- qlog will attempt to load a configuration file from the following locations in order:
+    - `~/.config/qlog/config.yaml`
+    - `~/.config/qlog/config.yml`
+    - `/usr/local/etc/qlog/config.yaml`
+    - `/usr/local/etc/qlog/config.yml`
 - An example configuration can be found in `config/config.yaml`
 
 ## Final thoughts
