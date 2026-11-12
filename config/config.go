@@ -85,10 +85,10 @@ func getConfigPath() string {
 	usr, _ := user.Current()
 	homeDir := usr.HomeDir
 
-	localYaml := filepath.Join(homeDir, ".config/yaki/config.yaml")
-	localYml := filepath.Join(homeDir, ".config/yaki/config.yml")
-	globalYaml := "/usr/local/etc/yaki/config.yaml"
-	globalYml := "/usr/local/etc/yaki/config.yml"
+	localYaml := filepath.Join(homeDir, ".config/qlog/config.yaml")
+	localYml := filepath.Join(homeDir, ".config/qlog/config.yml")
+	globalYaml := "/usr/local/etc/qlog/config.yaml"
+	globalYml := "/usr/local/etc/qlog/config.yml"
 
 	if _, err := os.Stat(localYaml); err == nil {
 		return localYaml

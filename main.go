@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/sk1mm1lk/yaki/config"
+	"github.com/sk1mm1lk/qlog/config"
 )
 
 type noteMessage struct {

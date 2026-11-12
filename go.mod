@@ -1,4 +1,4 @@
-module github.com/sk1mm1lk/yaki
+module github.com/sk1mm1lk/qlog
 
 go 1.27.1
 
